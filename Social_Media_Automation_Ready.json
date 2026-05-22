@@ -706,7 +706,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer YOUR_LINKEDIN_BEARER_TOKEN"
+              "value": "Bearer AQX1O71yOhTKxBTA7J1n6OBI_DcWR6m3KyfbPHPnIKN3d4GwJZPUF1Lo_JgDGXNg7j2nrkoq0FtNAuWYP7QRvji-3F6fmYIXJNvxwGlri_bk2HU1FQpr2ZDiYvtvAVe1WGda55Au9mnSmTG3uW44qnbuEV2OOq5dtTNIUjdRpziiMAB-YhNmizx4p2Uqtg2qCO7dERLteFWrJ0dbfnV7nlhuF_XaQZukOsGHGKV3ayDk7_Kg5NbOCpZyvyxnJ4dZimV40k8SW1NCypsRIkU89pBjUE5gXZMGoiVVNsDyVXty0mPPEATEFFHccNtiWuh9yukUcOQ968PeEHGxK4pK5uPP6006wg"
             },
             {
               "name": "Content-Type",
@@ -721,7 +721,7 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={     \"author\": \"YOUR_LINKEDIN_PERSON_URN\",     \"lifecycleState\": \"PUBLISHED\",     \"specificContent\": {       \"com.linkedin.ugc.ShareContent\": {         \"shareCommentary\": {           \"text\": \"={{ $('Get Pending Posts').item.json.linkedin_caption }}\"         },         \"shareMediaCategory\": \"NONE\"       }     },     \"visibility\": {       \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\"     }   }",
+        "body": "={     \"author\": \"urn:li:person:\" + $('Get My LinkedIn ID').item.json.sub,     \"lifecycleState\": \"PUBLISHED\",     \"specificContent\": {       \"com.linkedin.ugc.ShareContent\": {         \"shareCommentary\": {           \"text\": \"={{ $('Get Pending Posts').item.json.linkedin_caption }}\"         },         \"shareMediaCategory\": \"NONE\"       }     },     \"visibility\": {       \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\"     }   }",
         "options": {}
       },
       "id": "ca23c869-660a-4770-81ad-687cec63071b",
@@ -1386,7 +1386,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer YOUR_LINKEDIN_BEARER_TOKEN"
+              "value": "Bearer AQX1O71yOhTKxBTA7J1n6OBI_DcWR6m3KyfbPHPnIKN3d4GwJZPUF1Lo_JgDGXNg7j2nrkoq0FtNAuWYP7QRvji-3F6fmYIXJNvxwGlri_bk2HU1FQpr2ZDiYvtvAVe1WGda55Au9mnSmTG3uW44qnbuEV2OOq5dtTNIUjdRpziiMAB-YhNmizx4p2Uqtg2qCO7dERLteFWrJ0dbfnV7nlhuF_XaQZukOsGHGKV3ayDk7_Kg5NbOCpZyvyxnJ4dZimV40k8SW1NCypsRIkU89pBjUE5gXZMGoiVVNsDyVXty0mPPEATEFFHccNtiWuh9yukUcOQ968PeEHGxK4pK5uPP6006wg"
             },
             {
               "name": "Content-Type",
@@ -1447,7 +1447,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer YOUR_LINKEDIN_BEARER_TOKEN"
+              "value": "Bearer AQX1O71yOhTKxBTA7J1n6OBI_DcWR6m3KyfbPHPnIKN3d4GwJZPUF1Lo_JgDGXNg7j2nrkoq0FtNAuWYP7QRvji-3F6fmYIXJNvxwGlri_bk2HU1FQpr2ZDiYvtvAVe1WGda55Au9mnSmTG3uW44qnbuEV2OOq5dtTNIUjdRpziiMAB-YhNmizx4p2Uqtg2qCO7dERLteFWrJ0dbfnV7nlhuF_XaQZukOsGHGKV3ayDk7_Kg5NbOCpZyvyxnJ4dZimV40k8SW1NCypsRIkU89pBjUE5gXZMGoiVVNsDyVXty0mPPEATEFFHccNtiWuh9yukUcOQ968PeEHGxK4pK5uPP6006wg"
             },
             {
               "name": "Content-Type",
@@ -1462,7 +1462,7 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "{\"registerUploadRequest\":{\"recipes\":[\"urn:li:digitalmediaRecipe:feedshare-image\"],\"owner\":\"YOUR_LINKEDIN_PERSON_URN\",\"serviceRelationships\":[{\"relationshipType\":\"OWNER\",\"identifier\":\"urn:li:userGeneratedContent\"}]}}",
+        "body": "={{ JSON.stringify({ \"registerUploadRequest\": { \"recipes\": [\"urn:li:digitalmediaRecipe:feedshare-image\"], \"owner\": \"urn:li:person:\" + $('Get My LinkedIn ID').item.json.sub, \"serviceRelationships\": [{ \"relationshipType\": \"OWNER\", \"identifier\": \"urn:li:userGeneratedContent\" }] } }) }}",
         "options": {}
       },
       "id": "a9b8c7d6-e5f4-4210-9876-543210fedcba",
@@ -1503,7 +1503,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer YOUR_LINKEDIN_BEARER_TOKEN"
+              "value": "Bearer AQX1O71yOhTKxBTA7J1n6OBI_DcWR6m3KyfbPHPnIKN3d4GwJZPUF1Lo_JgDGXNg7j2nrkoq0FtNAuWYP7QRvji-3F6fmYIXJNvxwGlri_bk2HU1FQpr2ZDiYvtvAVe1WGda55Au9mnSmTG3uW44qnbuEV2OOq5dtTNIUjdRpziiMAB-YhNmizx4p2Uqtg2qCO7dERLteFWrJ0dbfnV7nlhuF_XaQZukOsGHGKV3ayDk7_Kg5NbOCpZyvyxnJ4dZimV40k8SW1NCypsRIkU89pBjUE5gXZMGoiVVNsDyVXty0mPPEATEFFHccNtiWuh9yukUcOQ968PeEHGxK4pK5uPP6006wg"
             }
           ]
         },
@@ -1530,7 +1530,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer YOUR_LINKEDIN_BEARER_TOKEN"
+              "value": "Bearer AQX1O71yOhTKxBTA7J1n6OBI_DcWR6m3KyfbPHPnIKN3d4GwJZPUF1Lo_JgDGXNg7j2nrkoq0FtNAuWYP7QRvji-3F6fmYIXJNvxwGlri_bk2HU1FQpr2ZDiYvtvAVe1WGda55Au9mnSmTG3uW44qnbuEV2OOq5dtTNIUjdRpziiMAB-YhNmizx4p2Uqtg2qCO7dERLteFWrJ0dbfnV7nlhuF_XaQZukOsGHGKV3ayDk7_Kg5NbOCpZyvyxnJ4dZimV40k8SW1NCypsRIkU89pBjUE5gXZMGoiVVNsDyVXty0mPPEATEFFHccNtiWuh9yukUcOQ968PeEHGxK4pK5uPP6006wg"
             },
             {
               "name": "Content-Type",
@@ -1545,7 +1545,7 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({ \"author\": \"YOUR_LINKEDIN_PERSON_URN\", \"lifecycleState\": \"PUBLISHED\", \"specificContent\": { \"com.linkedin.ugc.ShareContent\": { \"shareCommentary\": { \"text\": $('Restore Data').item.json.linkedin_caption }, \"shareMediaCategory\": \"IMAGE\", \"media\": [{ \"status\": \"READY\", \"description\": { \"text\": $('Restore Data').item.json.linkedin_caption }, \"media\": $('Register LinkedIn Image Upload').item.json.value.asset, \"title\": { \"text\": $('Restore Data').item.json.post_name } }] } }, \"visibility\": { \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\" } }) }}",
+        "body": "={{ JSON.stringify({ \"author\": \"urn:li:person:\" + $('Get My LinkedIn ID').item.json.sub, \"lifecycleState\": \"PUBLISHED\", \"specificContent\": { \"com.linkedin.ugc.ShareContent\": { \"shareCommentary\": { \"text\": $('Restore Data').item.json.linkedin_caption }, \"shareMediaCategory\": \"IMAGE\", \"media\": [{ \"status\": \"READY\", \"description\": { \"text\": $('Restore Data').item.json.linkedin_caption }, \"media\": $('Register LinkedIn Image Upload').item.json.value.asset, \"title\": { \"text\": $('Restore Data').item.json.post_name } }] } }, \"visibility\": { \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\" } }) }}",
         "options": {}
       },
       "id": "11223344-5566-4788-89aa-bbccddeeff00",
