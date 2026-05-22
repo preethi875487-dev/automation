@@ -650,6 +650,12 @@
               "name": "vimeo_description",
               "value": "={{ $('Is Pending?').item.json.vimeo_description }}",
               "type": "string"
+            },
+            {
+              "id": "rd-22",
+              "name": "drive_folder",
+              "value": "={{ $('Is Pending?').item.json.drive_folder }}",
+              "type": "string"
             }
           ]
         },
@@ -1449,6 +1455,70 @@
     },
     {
       "parameters": {
+        "jsCode": "const url = $('Restore Data').item.json.drive_folder || '';\nconst m = url.match(/folders\\/([a-zA-Z0-9_-]+)/);\nconst folderId = m ? m[1] : '';\nreturn [{ json: { folderId, post_id: $('Restore Data').item.json.post_id, linkedin_caption: $('Restore Data').item.json.linkedin_caption, post_name: $('Restore Data').item.json.post_name, linkedinSub: $('Get My LinkedIn ID').item.json.sub } }];"
+      },
+      "id": "code-extract-folder-001",
+      "name": "Code: Extract Folder ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1984,
+        2960
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "queryString": "='{{ $json.folderId }}' in parents and mimeType contains 'image/'",
+        "returnAll": true,
+        "options": {
+          "orderBy": "name"
+        }
+      },
+      "id": "google-drive-list-001",
+      "name": "List Drive Folder Files",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1728,
+        2960
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "CONNECT_GOOGLE_DRIVE",
+          "name": "Google Drive OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const files = $input.all();\nconst folderData = $('Code: Extract Folder ID').item.json;\nreturn files.map((f, i) => ({\n  json: {\n    imageUrl: 'https://drive.google.com/thumbnail?id=' + f.json.id + '&sz=w2000',\n    imageIndex: i,\n    post_id: folderData.post_id,\n    linkedin_caption: folderData.linkedin_caption,\n    post_name: folderData.post_name,\n    linkedinSub: folderData.linkedinSub\n  }\n}));"
+      },
+      "id": "code-prepare-files-001",
+      "name": "Code: Prepare File Items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1472,
+        2960
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "split-batches-001",
+      "name": "Split In Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1216,
+        2960
+      ]
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "https://api.linkedin.com/v2/assets?action=registerUpload",
         "sendHeaders": true,
@@ -1471,21 +1541,21 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({ \"registerUploadRequest\": { \"recipes\": [\"urn:li:digitalmediaRecipe:feedshare-image\"], \"owner\": \"urn:li:person:\" + $('Get My LinkedIn ID').item.json.sub, \"serviceRelationships\": [{ \"relationshipType\": \"OWNER\", \"identifier\": \"urn:li:userGeneratedContent\" }] } }) }}",
+        "body": "={{ JSON.stringify({ \"registerUploadRequest\": { \"recipes\": [\"urn:li:digitalmediaRecipe:feedshare-image\"], \"owner\": \"urn:li:person:\" + $('Split In Batches').item.json.linkedinSub, \"serviceRelationships\": [{ \"relationshipType\": \"OWNER\", \"identifier\": \"urn:li:userGeneratedContent\" }] } }) }}",
         "options": {}
       },
-      "id": "a9b8c7d6-e5f4-4210-9876-543210fedcba",
-      "name": "Register LinkedIn Image Upload",
+      "id": "register-upload-loop-001",
+      "name": "Register Upload",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -1984,
+        -960,
         2960
       ]
     },
     {
       "parameters": {
-        "url": "={{ (function(){ const u = $('Restore Data').item.json.media_link_1; const m = u.match(/\\/d\\/([\\w-]+)/); if(m && u.includes('drive.google.com')) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w2000'; const m2 = u.match(/id=([\\w-]+)/); if(m2 && u.includes('drive.google.com')) return 'https://drive.google.com/thumbnail?id=' + m2[1] + '&sz=w2000'; return u; })() }}",
+        "url": "={{ $('Split In Batches').item.json.imageUrl }}",
         "options": {
           "response": {
             "response": {
@@ -1494,21 +1564,19 @@
           }
         }
       },
-      "id": "12345678-90ab-4def-b234-567890abcde0",
-      "name": "Download Image for LinkedIn",
-
+      "id": "download-image-loop-001",
+      "name": "Download Image",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -1728,
+        -704,
         2960
-      ],
-      "alwaysOutputData": false
+      ]
     },
     {
       "parameters": {
         "method": "PUT",
-        "url": "={{ $('Register LinkedIn Image Upload').item.json.value.uploadMechanism['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest'].uploadUrl }}",
+        "url": "={{ $('Register Upload').item.json.value.uploadMechanism['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest'].uploadUrl }}",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -1523,12 +1591,72 @@
         "inputDataFieldName": "data",
         "options": {}
       },
-      "id": "fedcba98-7654-4210-afdc-ba9876543210",
-      "name": "Upload Image to LinkedIn",
+      "id": "upload-linkedin-loop-001",
+      "name": "Upload to LinkedIn",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -1472,
+        -448,
+        2960
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "urn-01",
+              "name": "assetUrn",
+              "value": "={{ $('Register Upload').item.json.value.asset }}",
+              "type": "string"
+            },
+            {
+              "id": "urn-02",
+              "name": "imageIndex",
+              "value": "={{ $('Split In Batches').item.json.imageIndex }}",
+              "type": "number"
+            },
+            {
+              "id": "urn-03",
+              "name": "post_id",
+              "value": "={{ $('Split In Batches').item.json.post_id }}",
+              "type": "string"
+            },
+            {
+              "id": "urn-04",
+              "name": "linkedin_caption",
+              "value": "={{ $('Split In Batches').item.json.linkedin_caption }}",
+              "type": "string"
+            },
+            {
+              "id": "urn-05",
+              "name": "linkedinSub",
+              "value": "={{ $('Split In Batches').item.json.linkedinSub }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "store-asset-urn-001",
+      "name": "Store Asset URN",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -192,
+        2960
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst sorted = [...items].sort((a, b) => a.json.imageIndex - b.json.imageIndex);\nconst media = sorted.map(item => ({ status: 'READY', description: { text: '' }, media: item.json.assetUrn, title: { text: '' } }));\nreturn [{ json: { postBody: JSON.stringify({ author: 'urn:li:person:' + sorted[0].json.linkedinSub, lifecycleState: 'PUBLISHED', specificContent: { 'com.linkedin.ugc.ShareContent': { shareCommentary: { text: sorted[0].json.linkedin_caption }, shareMediaCategory: 'IMAGE', media } }, visibility: { 'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC' } }), post_id: sorted[0].json.post_id } }];"
+      },
+      "id": "code-build-post-001",
+      "name": "Code: Build Post Body",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        64,
         2960
       ]
     },
@@ -1556,15 +1684,15 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({ \"author\": \"urn:li:person:\" + $('Get My LinkedIn ID').item.json.sub, \"lifecycleState\": \"PUBLISHED\", \"specificContent\": { \"com.linkedin.ugc.ShareContent\": { \"shareCommentary\": { \"text\": $('Restore Data').item.json.linkedin_caption }, \"shareMediaCategory\": \"IMAGE\", \"media\": [{ \"status\": \"READY\", \"description\": { \"text\": $('Restore Data').item.json.linkedin_caption }, \"media\": $('Register LinkedIn Image Upload').item.json.value.asset, \"title\": { \"text\": $('Restore Data').item.json.post_name } }] } }, \"visibility\": { \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\" } }) }}",
+        "body": "={{ $json.postBody }}",
         "options": {}
       },
-      "id": "11223344-5566-4788-89aa-bbccddeeff00",
-      "name": "Post to LinkedIn with Image",
+      "id": "post-linkedin-images-001",
+      "name": "Post to LinkedIn with Images",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -1216,
+        320,
         2960
       ]
     }
@@ -1695,7 +1823,7 @@
       "main": [
         [
           {
-            "node": "Register LinkedIn Image Upload",
+            "node": "Code: Extract Folder ID",
             "type": "main",
             "index": 0
           }
@@ -1703,50 +1831,6 @@
         [
           {
             "node": "Post to LinkedIn",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Register LinkedIn Image Upload": {
-      "main": [
-        [
-          {
-            "node": "Download Image for LinkedIn",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Download Image for LinkedIn": {
-      "main": [
-        [
-          {
-            "node": "Upload Image to LinkedIn",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Upload Image to LinkedIn": {
-      "main": [
-        [
-          {
-            "node": "Post to LinkedIn with Image",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Post to LinkedIn with Image": {
-      "main": [
-        [
-          {
-            "node": "Save LinkedIn Result",
             "type": "main",
             "index": 0
           }
@@ -1980,6 +2064,123 @@
         [
           {
             "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Extract Folder ID": {
+      "main": [
+        [
+          {
+            "node": "List Drive Folder Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Drive Folder Files": {
+      "main": [
+        [
+          {
+            "node": "Code: Prepare File Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Prepare File Items": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches": {
+      "main": [
+        [
+          {
+            "node": "Register Upload",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code: Build Post Body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Register Upload": {
+      "main": [
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "Upload to LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Store Asset URN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Asset URN": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Build Post Body": {
+      "main": [
+        [
+          {
+            "node": "Post to LinkedIn with Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to LinkedIn with Images": {
+      "main": [
+        [
+          {
+            "node": "Save LinkedIn Result",
             "type": "main",
             "index": 0
           }
