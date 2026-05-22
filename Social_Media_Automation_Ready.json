@@ -1468,11 +1468,16 @@
     },
     {
       "parameters": {
-        "operation": "search",
-        "queryString": "={{ \"'\" + $('Code: Extract Folder ID').item.json.folderId + \"' in parents and mimeType contains 'image/'\" }}",
+        "operation": "list",
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Code: Extract Folder ID').item.json.folderId }}",
+          "mode": "id"
+        },
         "returnAll": true,
         "options": {
-          "orderBy": "name"
+          "orderBy": "name",
+          "mimeType": "image"
         }
       },
       "id": "google-drive-list-001",
