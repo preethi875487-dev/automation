@@ -1485,7 +1485,7 @@
     },
     {
       "parameters": {
-        "url": "={{ $('Restore Data').item.json.media_link_1 }}",
+        "url": "={{ (function(){ const u = $('Restore Data').item.json.media_link_1; const m = u.match(/\\/d\\/([\\w-]+)/); if(m && u.includes('drive.google.com')) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w2000'; const m2 = u.match(/id=([\\w-]+)/); if(m2 && u.includes('drive.google.com')) return 'https://drive.google.com/thumbnail?id=' + m2[1] + '&sz=w2000'; return u; })() }}",
         "options": {
           "response": {
             "response": {
@@ -1496,12 +1496,14 @@
       },
       "id": "12345678-90ab-4def-b234-567890abcde0",
       "name": "Download Image for LinkedIn",
+
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
         -1728,
         2960
-      ]
+      ],
+      "alwaysOutputData": false
     },
     {
       "parameters": {
