@@ -1455,56 +1455,14 @@
     },
     {
       "parameters": {
-        "jsCode": "const url = $('Restore Data').item.json.drive_folder || '';\nconst m = url.match(/folders\\/([a-zA-Z0-9_-]+)/);\nconst folderId = m ? m[1] : '';\nreturn [{ json: { folderId, post_id: $('Restore Data').item.json.post_id, linkedin_caption: $('Restore Data').item.json.linkedin_caption, post_name: $('Restore Data').item.json.post_name, linkedinSub: $('Get My LinkedIn ID').item.json.sub } }];"
+        "jsCode": "const d = $('Restore Data').item.json;\nconst links = [d.media_link_1, d.media_link_2, d.media_link_3, d.media_link_4, d.media_link_5]\n  .filter(u => u && u.trim() !== '');\n\nfunction toImageUrl(url) {\n  const m = url.match(/[?&]id=([a-zA-Z0-9_-]+)/) || url.match(/\\/d\\/([a-zA-Z0-9_-]+)/);\n  return m ? 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w2000' : url;\n}\n\nreturn links.map((url, i) => ({\n  json: {\n    imageUrl: toImageUrl(url),\n    imageIndex: i,\n    post_id: d.post_id,\n    linkedin_caption: d.linkedin_caption,\n    post_name: d.post_name,\n    linkedinSub: $('Get My LinkedIn ID').item.json.sub\n  }\n}));"
       },
       "id": "code-extract-folder-001",
-      "name": "Code: Extract Folder ID",
+      "name": "Code: Prepare Media Links",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
         -1984,
-        2960
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "list",
-        "folderId": {
-          "__rl": true,
-          "value": "={{ $('Code: Extract Folder ID').item.json.folderId }}",
-          "mode": "id"
-        },
-        "returnAll": true,
-        "options": {
-          "orderBy": "name",
-          "mimeType": "image"
-        }
-      },
-      "id": "google-drive-list-001",
-      "name": "List Drive Folder Files",
-      "type": "n8n-nodes-base.googleDrive",
-      "typeVersion": 3,
-      "position": [
-        -1728,
-        2960
-      ],
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "CONNECT_GOOGLE_DRIVE",
-          "name": "Google Drive OAuth2"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "const files = $input.all();\nconst folderData = $('Code: Extract Folder ID').item.json;\nreturn files.map((f, i) => ({\n  json: {\n    imageUrl: 'https://drive.google.com/thumbnail?id=' + f.json.id + '&sz=w2000',\n    imageIndex: i,\n    post_id: folderData.post_id,\n    linkedin_caption: folderData.linkedin_caption,\n    post_name: folderData.post_name,\n    linkedinSub: folderData.linkedinSub\n  }\n}));"
-      },
-      "id": "code-prepare-files-001",
-      "name": "Code: Prepare File Items",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -1472,
         2960
       ]
     },
@@ -1828,7 +1786,7 @@
       "main": [
         [
           {
-            "node": "Code: Extract Folder ID",
+            "node": "Code: Prepare Media Links",
             "type": "main",
             "index": 0
           }
@@ -2075,39 +2033,6 @@
         ]
       ]
     },
-    "Code: Extract Folder ID": {
-      "main": [
-        [
-          {
-            "node": "List Drive Folder Files",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "List Drive Folder Files": {
-      "main": [
-        [
-          {
-            "node": "Code: Prepare File Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Code: Prepare File Items": {
-      "main": [
-        [
-          {
-            "node": "Split In Batches",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Split In Batches": {
       "main": [
         [
@@ -2186,6 +2111,17 @@
         [
           {
             "node": "Save LinkedIn Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Prepare Media Links": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
             "type": "main",
             "index": 0
           }
