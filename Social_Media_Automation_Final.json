@@ -1,0 +1,1991 @@
+{
+  "name": "Social Media Automation v2 - Fixed",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "6c82c65e-63e0-4011-b7a2-9f5997cdcc89",
+      "name": "Every 1 Minute",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -4048,
+        4000
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17fn4aZkNyBOVK_4k_b71dFOI5Uwb3cxsmYAfn4CaRsI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "7d395bc4-ce8d-418b-b846-316ab8000292",
+      "name": "Get Pending Posts",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [
+        -3840,
+        4000
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "a8QQGVKkNi1fkeXR",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-pending",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "Pending",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3a220eea-ebd3-4292-a61b-9874ce554abb",
+      "name": "Is Pending?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -3648,
+        4000
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-time",
+              "leftValue": "={{ $now.format('yyyy-MM-dd HH:mm') }}",
+              "rightValue": "={{ $json.scheduled_date + ' ' + $json.scheduled_time }}",
+              "operator": {
+                "type": "string",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "133e2473-b0b3-40a1-80a1-aa17320082d0",
+      "name": "Is It Time?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -3440,
+        4000
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "17fn4aZkNyBOVK_4k_b71dFOI5Uwb3cxsmYAfn4CaRsI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "post_id": "={{ $json.post_id }}",
+            "status": "Processing",
+            "row_number": 0
+          },
+          "matchingColumns": [
+            "post_id"
+          ],
+          "schema": [
+            {
+              "id": "post_id",
+              "displayName": "post_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "post_name",
+              "displayName": "post_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "scheduled_date",
+              "displayName": "scheduled_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "scheduled_time",
+              "displayName": "scheduled_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "media_type",
+              "displayName": "media_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "media_link_1",
+              "displayName": "media_link_1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "media_link_2",
+              "displayName": "media_link_2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "media_link_3",
+              "displayName": "media_link_3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "media_link_4",
+              "displayName": "media_link_4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "media_link_5",
+              "displayName": "media_link_5",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "post_twitter",
+              "displayName": "post_twitter",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "post_instagram",
+              "displayName": "post_instagram",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "post_facebook",
+              "displayName": "post_facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "post_linkedin",
+              "displayName": "post_linkedin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "post_youtube",
+              "displayName": "post_youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "post_vimeo",
+              "displayName": "post_vimeo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "twitter_caption",
+              "displayName": "twitter_caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "instagram_caption",
+              "displayName": "instagram_caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "facebook_caption",
+              "displayName": "facebook_caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "linkedin_caption",
+              "displayName": "linkedin_caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "youtube_title",
+              "displayName": "youtube_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "youtube_description",
+              "displayName": "youtube_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "vimeo_title",
+              "displayName": "vimeo_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "vimeo_description",
+              "displayName": "vimeo_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "playlist_action",
+              "displayName": "playlist_action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "playlist_name",
+              "displayName": "playlist_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "posted_at",
+              "displayName": "posted_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "twitter_result",
+              "displayName": "twitter_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "instagram_result",
+              "displayName": "instagram_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "facebook_result",
+              "displayName": "facebook_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "linkedin_result",
+              "displayName": "linkedin_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "youtube_result",
+              "displayName": "youtube_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "vimeo_result",
+              "displayName": "vimeo_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "validation_error",
+              "displayName": "validation_error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "ed5e91ed-d16b-494d-a49d-f9992f8100fe",
+      "name": "Mark as Processing",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [
+        -3248,
+        4000
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "a8QQGVKkNi1fkeXR",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "rd-01",
+              "name": "post_id",
+              "value": "={{ $('Is Pending?').item.json.post_id }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-02",
+              "name": "post_name",
+              "value": "={{ $('Is Pending?').item.json.post_name }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-03",
+              "name": "scheduled_date",
+              "value": "={{ $('Is Pending?').item.json.scheduled_date }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-04",
+              "name": "scheduled_time",
+              "value": "={{ $('Is Pending?').item.json.scheduled_time }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-05",
+              "name": "media_type",
+              "value": "={{ $('Is Pending?').item.json.media_type }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-06",
+              "name": "media_link_1",
+              "value": "={{ $('Is Pending?').item.json.media_link_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-07",
+              "name": "media_link_2",
+              "value": "={{ $('Is Pending?').item.json.media_link_2 }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-08",
+              "name": "post_twitter",
+              "value": "={{ $('Is Pending?').item.json.post_twitter }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-09",
+              "name": "post_instagram",
+              "value": "={{ $('Is Pending?').item.json.post_instagram }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-10",
+              "name": "post_facebook",
+              "value": "={{ $('Is Pending?').item.json.post_facebook }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-11",
+              "name": "post_linkedin",
+              "value": "={{ $('Is Pending?').item.json.post_linkedin }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-12",
+              "name": "post_youtube",
+              "value": "={{ $('Is Pending?').item.json.post_youtube }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-13",
+              "name": "post_vimeo",
+              "value": "={{ $('Is Pending?').item.json.post_vimeo }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-14",
+              "name": "twitter_caption",
+              "value": "={{ $('Is Pending?').item.json.twitter_caption }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-15",
+              "name": "instagram_caption",
+              "value": "={{ $('Is Pending?').item.json.instagram_caption }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-16",
+              "name": "facebook_caption",
+              "value": "={{ $('Is Pending?').item.json.facebook_caption }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-17",
+              "name": "linkedin_caption",
+              "value": "={{ $('Is Pending?').item.json.linkedin_caption }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-18",
+              "name": "youtube_title",
+              "value": "={{ $('Is Pending?').item.json.youtube_title }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-19",
+              "name": "youtube_description",
+              "value": "={{ $('Is Pending?').item.json.youtube_description }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-20",
+              "name": "vimeo_title",
+              "value": "={{ $('Is Pending?').item.json.vimeo_title }}",
+              "type": "string"
+            },
+            {
+              "id": "rd-21",
+              "name": "vimeo_description",
+              "value": "={{ $('Is Pending?').item.json.vimeo_description }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "29086e07-3dfa-4a6c-8cb1-4dfe7a1169d7",
+      "name": "Restore Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3040,
+        4000
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "cond-li",
+              "leftValue": "={{ $json.post_linkedin }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and",
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "id": "e7991604-ce3a-4424-b3dc-36d233178fe3",
+      "name": "Post to LinkedIn?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2752,
+        3408
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.linkedin.com/v2/ugcPosts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer AQVqO0ABttQ_tMytnSDXwdHTs9w_TdUG6rfduYN1sGdaxlZ2HNSUIxEnvczjThSInWIhWTsWCIux3o4bjsy43FSwmi7eP_zhvKzWvnOP5c9KKprq_Kk9S34EawqXvIzRRR4skydAcyiMkq8431mtPHmkDx4hWT6TC_cv66VaDCOGT-hsM3dS-4-hWf5aJQUZ5RBAcqBVrDuJyBU3TDqJjLXlKFNw1OZi9gkbpKiTPAkMTLdPVh7rL3CgSCqx5TcKxNWhIUEPTNy631H2FC2guI0Ytk10xrVStXe7gBn-8fkzyLqCGKm0zeFPz__JhB3Sn9jnyZTdRjGpPNYHoeJGJoQubs4suA"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Restli-Protocol-Version",
+              "value": "2.0.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={     \"author\": \"urn:li:person:r-pmkebVV7\",     \"lifecycleState\": \"PUBLISHED\",     \"specificContent\": {       \"com.linkedin.ugc.ShareContent\": {         \"shareCommentary\": {           \"text\": \"={{ $('Get Pending Posts').item.json.linkedin_caption }}\"         },         \"shareMediaCategory\": \"NONE\"       }     },     \"visibility\": {       \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\"     }   }",
+        "options": {}
+      },
+      "id": "ca23c869-660a-4770-81ad-687cec63071b",
+      "name": "Post to LinkedIn",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2240,
+        3200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "17fn4aZkNyBOVK_4k_b71dFOI5Uwb3cxsmYAfn4CaRsI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "post_id": "={{ $('Restore Data').item.json.post_id }}",
+            "linkedin_result": "={{ $json.id ? 'ok - ' + $json.id : 'error - ' + $json.message }}"
+          },
+          "matchingColumns": [
+            "post_id"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "346e8e1c-c1a8-478e-872b-b5f36f781f46",
+      "name": "Save LinkedIn Result",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [
+        -2240,
+        3312
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "a8QQGVKkNi1fkeXR",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "cond-fb",
+              "leftValue": "={{ $json.post_facebook }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and",
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "id": "12227334-5cc5-4cad-91db-1eb0e8887ab2",
+      "name": "Post to Facebook?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2752,
+        3600
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/YOUR_FB_PAGE_ID/feed",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{ $('Restore Data').item.json.facebook_caption }}"
+            },
+            {
+              "name": "link",
+              "value": "={{ $('Restore Data').item.json.media_link_1 }}"
+            },
+            {
+              "name": "access_token",
+              "value": "YOUR_FB_PAGE_ACCESS_TOKEN"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c05c0ee2-a297-489e-b6cc-52063f51137e",
+      "name": "Post to Facebook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2496,
+        3504
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "17fn4aZkNyBOVK_4k_b71dFOI5Uwb3cxsmYAfn4CaRsI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "post_id": "={{ $('Restore Data').item.json.post_id }}",
+            "facebook_result": "={{ $json.id ? 'ok - ' + $json.id : 'error - ' + $json.message }}"
+          },
+          "matchingColumns": [
+            "post_id"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "49534bfd-f34a-4c46-aaca-d5ea5a65f736",
+      "name": "Save Facebook Result",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [
+        -2240,
+        3504
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "a8QQGVKkNi1fkeXR",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "cond-ig",
+              "leftValue": "={{ $json.post_instagram }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and",
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "id": "f188f9ac-2f30-459a-841a-c28ea9ab40e0",
+      "name": "Post to Instagram?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2752,
+        3808
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/YOUR_IG_USER_ID/media",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "image_url",
+              "value": "={{ $('Restore Data').item.json.media_link_1 }}"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $('Restore Data').item.json.instagram_caption }}"
+            },
+            {
+              "name": "access_token",
+              "value": "YOUR_FB_PAGE_ACCESS_TOKEN"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f336383d-0058-46b1-b049-696de6649a16",
+      "name": "Create Instagram Container",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2496,
+        3712
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/YOUR_IG_USER_ID/media_publish",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "creation_id",
+              "value": "={{ $json.id }}"
+            },
+            {
+              "name": "access_token",
+              "value": "YOUR_FB_PAGE_ACCESS_TOKEN"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0cdd54de-b0e5-40c1-a800-0ee588de50a5",
+      "name": "Publish Instagram Post",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2240,
+        3712
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "17fn4aZkNyBOVK_4k_b71dFOI5Uwb3cxsmYAfn4CaRsI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "post_id": "={{ $('Restore Data').item.json.post_id }}",
+            "instagram_result": "={{ $json.id ? 'ok - ' + $json.id : 'error - ' + $json.message }}"
+          },
+          "matchingColumns": [
+            "post_id"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "bbe002ab-efe8-4bb3-b46b-ca2a48462b04",
+      "name": "Save Instagram Result",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [
+        -2000,
+        3712
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "a8QQGVKkNi1fkeXR",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "cond-tw",
+              "leftValue": "={{ $json.post_twitter }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and",
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "id": "09342d4b-66e9-4a2e-b5ef-b08bce4dc5e1",
+      "name": "Post to Twitter?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2752,
+        4000
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.twitter.com/2/tweets",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_TWITTER_BEARER_TOKEN"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ \"text\": $('Restore Data').item.json.twitter_caption }) }}",
+        "options": {}
+      },
+      "id": "1c67c01a-5e9c-4331-8faf-678a330f3de9",
+      "name": "Post to Twitter",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2496,
+        3904
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "17fn4aZkNyBOVK_4k_b71dFOI5Uwb3cxsmYAfn4CaRsI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "post_id": "={{ $('Restore Data').item.json.post_id }}",
+            "twitter_result": "={{ $json.data && $json.data.id ? 'ok - ' + $json.data.id : 'error - ' + $json.title }}"
+          },
+          "matchingColumns": [
+            "post_id"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "f0f7b5f8-8db5-482c-97c3-cb9bedc69263",
+      "name": "Save Twitter Result",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [
+        -2240,
+        3904
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "a8QQGVKkNi1fkeXR",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "cond-yt",
+              "leftValue": "={{ $json.post_youtube }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and",
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "id": "e089f536-944b-48d4-8f9e-6bac5819e2e9",
+      "name": "Post to YouTube?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2752,
+        4208
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_GOOGLE_ACCESS_TOKEN"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ \"snippet\": { \"title\": $('Restore Data').item.json.youtube_title, \"description\": $('Restore Data').item.json.youtube_description }, \"status\": { \"privacyStatus\": \"public\" } }) }}",
+        "options": {}
+      },
+      "id": "1ccaf353-fc44-44df-ac16-e0dbab8926af",
+      "name": "Upload to YouTube",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2496,
+        4112
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "17fn4aZkNyBOVK_4k_b71dFOI5Uwb3cxsmYAfn4CaRsI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "post_id": "={{ $('Restore Data').item.json.post_id }}",
+            "youtube_result": "={{ $json.id ? 'ok - ' + $json.id : 'error - ' + $json.message }}"
+          },
+          "matchingColumns": [
+            "post_id"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "80b66b7e-9b07-4d00-bd89-abd9e3fe0016",
+      "name": "Save YouTube Result",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [
+        -2240,
+        4112
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "a8QQGVKkNi1fkeXR",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "cond-vm",
+              "leftValue": "={{ $json.post_vimeo }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and",
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "id": "9420cffb-0952-4520-aa1a-429637449176",
+      "name": "Post to Vimeo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2752,
+        4400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.vimeo.com/me/videos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_VIMEO_TOKEN"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/vnd.vimeo.*+json;version=3.4"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ \"upload\": { \"approach\": \"pull\", \"link\": $('Restore Data').item.json.media_link_1 }, \"name\": $('Restore Data').item.json.vimeo_title, \"description\": $('Restore Data').item.json.vimeo_description }) }}",
+        "options": {}
+      },
+      "id": "a7a125df-6880-4faa-b54d-738ba4be740c",
+      "name": "Upload to Vimeo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2496,
+        4304
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "17fn4aZkNyBOVK_4k_b71dFOI5Uwb3cxsmYAfn4CaRsI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "post_id": "={{ $('Restore Data').item.json.post_id }}",
+            "vimeo_result": "={{ $json.link ? 'ok - ' + $json.link : 'error - ' + $json.error }}"
+          },
+          "matchingColumns": [
+            "post_id"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "d4c2cfcd-2f79-49d8-89fe-0bf11b326d7f",
+      "name": "Save Vimeo Result",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [
+        -2240,
+        4304
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "a8QQGVKkNi1fkeXR",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "17fn4aZkNyBOVK_4k_b71dFOI5Uwb3cxsmYAfn4CaRsI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "post_id": "={{ $('Restore Data').item.json.post_id }}",
+            "status": "Posted",
+            "posted_at": "={{ $now.format('yyyy-MM-dd HH:mm:ss') }}"
+          },
+          "matchingColumns": [
+            "post_id"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "9b106308-f610-436b-9233-39457e0478cd",
+      "name": "Mark as Posted",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [
+        -1696,
+        4000
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "a8QQGVKkNi1fkeXR",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.linkedin.com/v2/userinfo",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer AQVqO0ABttQ_tMytnSDXwdHTs9w_TdUG6rfduYN1sGdaxlZ2HNSUIxEnvczjThSInWIhWTsWCIux3o4bjsy43FSwmi7eP_zhvKzWvnOP5c9KKprq_Kk9S34EawqXvIzRRR4skydAcyiMkq8431mtPHmkDx4hWT6TC_cv66VaDCOGT-hsM3dS-4-hWf5aJQUZ5RBAcqBVrDuJyBU3TDqJjLXlKFNw1OZi9gkbpKiTPAkMTLdPVh7rL3CgSCqx5TcKxNWhIUEPTNy631H2FC2guI0Ytk10xrVStXe7gBn-8fkzyLqCGKm0zeFPz__JhB3Sn9jnyZTdRjGpPNYHoeJGJoQubs4suA"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "344a181b-d951-4b53-9559-4b0789bfdabe",
+      "name": "Get My LinkedIn ID",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2496,
+        3200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "cond-li-media",
+              "leftValue": "={{ $('Restore Data').item.json.media_type }}",
+              "rightValue": "image",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and",
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "id": "f1e2d3c4-b5a6-4890-a123-567890abcdef",
+      "name": "LinkedIn Media Type?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2240,
+        3080
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.linkedin.com/v2/assets?action=registerUpload",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer AQVqO0ABttQ_tMytnSDXwdHTs9w_TdUG6rfduYN1sGdaxlZ2HNSUIxEnvczjThSInWIhWTsWCIux3o4bjsy43FSwmi7eP_zhvKzWvnOP5c9KKprq_Kk9S34EawqXvIzRRR4skydAcyiMkq8431mtPHmkDx4hWT6TC_cv66VaDCOGT-hsM3dS-4-hWf5aJQUZ5RBAcqBVrDuJyBU3TDqJjLXlKFNw1OZi9gkbpKiTPAkMTLdPVh7rL3CgSCqx5TcKxNWhIUEPTNy631H2FC2guI0Ytk10xrVStXe7gBn-8fkzyLqCGKm0zeFPz__JhB3Sn9jnyZTdRjGpPNYHoeJGJoQubs4suA"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Restli-Protocol-Version",
+              "value": "2.0.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "{\"registerUploadRequest\":{\"recipes\":[\"urn:li:digitalmediaRecipe:feedshare-image\"],\"owner\":\"urn:li:person:r-pmkebVV7\",\"serviceRelationships\":[{\"relationshipType\":\"OWNER\",\"identifier\":\"urn:li:userGeneratedContent\"}]}}",
+        "options": {}
+      },
+      "id": "a9b8c7d6-e5f4-4210-9876-543210fedcba",
+      "name": "Register LinkedIn Image Upload",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1984,
+        2960
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Restore Data').item.json.media_link_1 }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "12345678-90ab-4def-b234-567890abcde0",
+      "name": "Download Image for LinkedIn",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1728,
+        2960
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $('Register LinkedIn Image Upload').item.json.value.uploadMechanism['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest'].uploadUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer AQVqO0ABttQ_tMytnSDXwdHTs9w_TdUG6rfduYN1sGdaxlZ2HNSUIxEnvczjThSInWIhWTsWCIux3o4bjsy43FSwmi7eP_zhvKzWvnOP5c9KKprq_Kk9S34EawqXvIzRRR4skydAcyiMkq8431mtPHmkDx4hWT6TC_cv66VaDCOGT-hsM3dS-4-hWf5aJQUZ5RBAcqBVrDuJyBU3TDqJjLXlKFNw1OZi9gkbpKiTPAkMTLdPVh7rL3CgSCqx5TcKxNWhIUEPTNy631H2FC2guI0Ytk10xrVStXe7gBn-8fkzyLqCGKm0zeFPz__JhB3Sn9jnyZTdRjGpPNYHoeJGJoQubs4suA"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "id": "fedcba98-7654-4210-afdc-ba9876543210",
+      "name": "Upload Image to LinkedIn",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1472,
+        2960
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.linkedin.com/v2/ugcPosts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer AQVqO0ABttQ_tMytnSDXwdHTs9w_TdUG6rfduYN1sGdaxlZ2HNSUIxEnvczjThSInWIhWTsWCIux3o4bjsy43FSwmi7eP_zhvKzWvnOP5c9KKprq_Kk9S34EawqXvIzRRR4skydAcyiMkq8431mtPHmkDx4hWT6TC_cv66VaDCOGT-hsM3dS-4-hWf5aJQUZ5RBAcqBVrDuJyBU3TDqJjLXlKFNw1OZi9gkbpKiTPAkMTLdPVh7rL3CgSCqx5TcKxNWhIUEPTNy631H2FC2guI0Ytk10xrVStXe7gBn-8fkzyLqCGKm0zeFPz__JhB3Sn9jnyZTdRjGpPNYHoeJGJoQubs4suA"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Restli-Protocol-Version",
+              "value": "2.0.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ \"author\": \"urn:li:person:r-pmkebVV7\", \"lifecycleState\": \"PUBLISHED\", \"specificContent\": { \"com.linkedin.ugc.ShareContent\": { \"shareCommentary\": { \"text\": $('Restore Data').item.json.linkedin_caption }, \"shareMediaCategory\": \"IMAGE\", \"media\": [{ \"status\": \"READY\", \"description\": { \"text\": $('Restore Data').item.json.linkedin_caption }, \"media\": $('Register LinkedIn Image Upload').item.json.value.asset, \"title\": { \"text\": $('Restore Data').item.json.post_name } }] } }, \"visibility\": { \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\" } }) }}",
+        "options": {}
+      },
+      "id": "11223344-5566-4788-89aa-bbccddeeff00",
+      "name": "Post to LinkedIn with Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1216,
+        2960
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Every 1 Minute": {
+      "main": [
+        [
+          {
+            "node": "Get Pending Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Pending Posts": {
+      "main": [
+        [
+          {
+            "node": "Is Pending?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Pending?": {
+      "main": [
+        [
+          {
+            "node": "Is It Time?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is It Time?": {
+      "main": [
+        [
+          {
+            "node": "Mark as Processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as Processing": {
+      "main": [
+        [
+          {
+            "node": "Restore Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restore Data": {
+      "main": [
+        [
+          {
+            "node": "Post to LinkedIn?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Post to Facebook?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Post to Instagram?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Post to Twitter?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Post to YouTube?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Post to Vimeo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to LinkedIn?": {
+      "main": [
+        [
+          {
+            "node": "Get My LinkedIn ID",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get My LinkedIn ID": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn Media Type?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Media Type?": {
+      "main": [
+        [
+          {
+            "node": "Register LinkedIn Image Upload",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Post to LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Register LinkedIn Image Upload": {
+      "main": [
+        [
+          {
+            "node": "Download Image for LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image for LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Upload Image to LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image to LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Post to LinkedIn with Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to LinkedIn with Image": {
+      "main": [
+        [
+          {
+            "node": "Save LinkedIn Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Save LinkedIn Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save LinkedIn Result": {
+      "main": [
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Facebook?": {
+      "main": [
+        [
+          {
+            "node": "Post to Facebook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Facebook": {
+      "main": [
+        [
+          {
+            "node": "Save Facebook Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Facebook Result": {
+      "main": [
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Instagram?": {
+      "main": [
+        [
+          {
+            "node": "Create Instagram Container",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Instagram Container": {
+      "main": [
+        [
+          {
+            "node": "Publish Instagram Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish Instagram Post": {
+      "main": [
+        [
+          {
+            "node": "Save Instagram Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Instagram Result": {
+      "main": [
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Twitter?": {
+      "main": [
+        [
+          {
+            "node": "Post to Twitter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Twitter": {
+      "main": [
+        [
+          {
+            "node": "Save Twitter Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Twitter Result": {
+      "main": [
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to YouTube?": {
+      "main": [
+        [
+          {
+            "node": "Upload to YouTube",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to YouTube": {
+      "main": [
+        [
+          {
+            "node": "Save YouTube Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save YouTube Result": {
+      "main": [
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Vimeo?": {
+      "main": [
+        [
+          {
+            "node": "Upload to Vimeo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Vimeo": {
+      "main": [
+        [
+          {
+            "node": "Save Vimeo Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Vimeo Result": {
+      "main": [
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "37a8d649-5e8e-4f4f-a8e3-520905c5ee92",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc0f8f4a2ff443b462b10a7be3fc33ab99727e6a2bcc1a9bfc6bfc752b0b0ec9"
+  },
+  "id": "e1DkkB8GTHiISuX1",
+  "tags": []
+}
