@@ -721,7 +721,7 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={     \"author\": \"urn:li:person:\" + $('Get My LinkedIn ID').item.json.sub,     \"lifecycleState\": \"PUBLISHED\",     \"specificContent\": {       \"com.linkedin.ugc.ShareContent\": {         \"shareCommentary\": {           \"text\": \"={{ $('Get Pending Posts').item.json.linkedin_caption }}\"         },         \"shareMediaCategory\": \"NONE\"       }     },     \"visibility\": {       \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\"     }   }",
+        "body": "={{ JSON.stringify({ \"author\": \"urn:li:person:\" + $('Get My LinkedIn ID').item.json.sub, \"lifecycleState\": \"PUBLISHED\", \"specificContent\": { \"com.linkedin.ugc.ShareContent\": { \"shareCommentary\": { \"text\": $('Restore Data').item.json.linkedin_caption }, \"shareMediaCategory\": \"NONE\" } }, \"visibility\": { \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\" } }) }}",
         "options": {}
       },
       "id": "ca23c869-660a-4770-81ad-687cec63071b",
