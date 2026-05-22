@@ -1417,6 +1417,15 @@
                 "type": "string",
                 "operation": "equals"
               }
+            },
+            {
+              "id": "cond-li-link",
+              "leftValue": "={{ $('Restore Data').item.json.media_link_1 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
             }
           ],
           "combinator": "and",
