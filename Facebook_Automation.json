@@ -1,0 +1,523 @@
+{
+  "name": "Facebook Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "04ee7861-d219-4fb7-95a8-3b3e860e9c12",
+      "name": "Every 1 Minute",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "ea6c712d-4fa7-45ff-82e7-c0bf92c416b6",
+      "name": "Get Pending Posts",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GSHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cdda8646-7ab5-460a-9c76-5defb121dcff",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "Pending",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "cfeb95b3-caf7-4345-8e32-ccb930658703",
+      "name": "Is Pending?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "b792152f-c399-4499-a47b-dc0636e088bb",
+              "leftValue": "={{ $now.format('yyyy-MM-dd HH:mm') }}",
+              "rightValue": "={{ $json.scheduled_date + ' ' + $json.scheduled_time }}",
+              "operator": {
+                "type": "string",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "827ac743-9ebb-4700-a201-b20c7c1d37bf",
+      "name": "Is It Time?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "post_id": "={{ $json.post_id }}",
+            "status": "Processing",
+            "row_number": 0
+          },
+          "matchingColumns": [
+            "post_id"
+          ],
+          "schema": [
+            {
+              "id": "post_id",
+              "displayName": "post_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "c25a6291-c916-4032-87ef-dad8340f7f34",
+      "name": "Mark as Processing",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GSHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8968b52c-c43a-4793-9325-1cc40722e2f0",
+              "name": "post_id",
+              "value": "={{ $('Is Pending?').item.json.post_id }}",
+              "type": "string"
+            },
+            {
+              "id": "5d1063f6-4d1e-4743-96a0-e949d217df5a",
+              "name": "post_name",
+              "value": "={{ $('Is Pending?').item.json.post_name }}",
+              "type": "string"
+            },
+            {
+              "id": "80a6bbad-d998-4e5c-a1fa-26e8d738f916",
+              "name": "scheduled_date",
+              "value": "={{ $('Is Pending?').item.json.scheduled_date }}",
+              "type": "string"
+            },
+            {
+              "id": "c2ff45f2-f42e-4e5f-8d5c-651797300f6c",
+              "name": "scheduled_time",
+              "value": "={{ $('Is Pending?').item.json.scheduled_time }}",
+              "type": "string"
+            },
+            {
+              "id": "9442c05c-c24a-46d9-bce5-1485a2c52369",
+              "name": "media_type",
+              "value": "={{ $('Is Pending?').item.json.media_type }}",
+              "type": "string"
+            },
+            {
+              "id": "f0382546-3e24-4181-b43b-5aab76f2937a",
+              "name": "media_link_1",
+              "value": "={{ $('Is Pending?').item.json.media_link_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "e326ba1c-0bd9-4126-bc4b-49cdf5079958",
+              "name": "post_facebook",
+              "value": "={{ $('Is Pending?').item.json.post_facebook }}",
+              "type": "string"
+            },
+            {
+              "id": "199c4647-062d-4f2c-830b-c950008fa525",
+              "name": "facebook_caption",
+              "value": "={{ $('Is Pending?').item.json.facebook_caption }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7404d7cb-3bd5-4072-ab7b-a14ba0d09f2b",
+      "name": "Restore Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1100,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "f887f786-6e39-4cda-8bee-d844b2cd99dc",
+              "leftValue": "={{ $json.post_facebook }}",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and",
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "id": "a109072d-41a0-451b-ba3b-f9086ef99292",
+      "name": "Post to Facebook?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v18.0/YOUR_FB_PAGE_ID/feed",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{ $('Restore Data').item.json.facebook_caption }}"
+            },
+            {
+              "name": "link",
+              "value": "={{ $('Restore Data').item.json.media_link_1 }}"
+            },
+            {
+              "name": "access_token",
+              "value": "YOUR_FB_PAGE_ACCESS_TOKEN"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e184d186-210e-4305-a2f6-ef00bf4adc1c",
+      "name": "Post to Facebook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1540,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "post_id": "={{ $('Restore Data').item.json.post_id }}",
+            "facebook_result": "={{ $json.id ? 'ok - ' + $json.id : 'error - ' + $json.message }}"
+          },
+          "matchingColumns": [
+            "post_id"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "52442112-ffc1-46ca-86b5-7d7a3fc58a70",
+      "name": "Save Facebook Result",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        -120
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GSHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "post_id": "={{ $('Restore Data').item.json.post_id }}",
+            "status": "Posted",
+            "posted_at": "={{ $now.format('yyyy-MM-dd HH:mm:ss') }}"
+          },
+          "matchingColumns": [
+            "post_id"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "39db7524-da78-4dd8-b027-1a2003df801b",
+      "name": "Mark as Posted",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [
+        1980,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GSHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Every 1 Minute": {
+      "main": [
+        [
+          {
+            "node": "Get Pending Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Pending Posts": {
+      "main": [
+        [
+          {
+            "node": "Is Pending?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Pending?": {
+      "main": [
+        [
+          {
+            "node": "Is It Time?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is It Time?": {
+      "main": [
+        [
+          {
+            "node": "Mark as Processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as Processing": {
+      "main": [
+        [
+          {
+            "node": "Restore Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restore Data": {
+      "main": [
+        [
+          {
+            "node": "Post to Facebook?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Facebook?": {
+      "main": [
+        [
+          {
+            "node": "Post to Facebook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Facebook": {
+      "main": [
+        [
+          {
+            "node": "Save Facebook Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Facebook Result": {
+      "main": [
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "instanceId": "fb-automation-only"
+  }
+}

@@ -1,0 +1,3 @@
+post_id,post_name,scheduled_date,scheduled_time,media_type,media_link_1,post_facebook,facebook_caption,status,posted_at,facebook_result
+POST-FB-001,My Facebook Post,2026-05-23,10:00,text,,yes,Hello from automation! 🚀,Pending,,,
+POST-FB-002,Facebook Image Post,2026-05-23,12:00,image,https://drive.google.com/file/d/YOUR_FILE_ID/view,yes,Check out this image!,Pending,,,
