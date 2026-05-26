@@ -37,9 +37,13 @@
 
     .kc-outcome-item {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 10px;
       grid-column: span 2;
+    }
+
+    .kc-outcome-check {
+      margin-top: 2px;
     }
 
     /* Row 2: shift right by one column to centre under row 1 */
@@ -73,11 +77,9 @@
       color: #ffffff;
       line-height: 1.5;
       margin: 0;
-      white-space: nowrap;
     }
 
     @media (max-width: 700px) {
-      .kc-outcome-text { white-space: normal; }
       .kc-outcome-grid { grid-template-columns: 1fr; row-gap: 14px; }
       .kc-outcome-item,
       .kc-outcome-item:nth-child(4),
